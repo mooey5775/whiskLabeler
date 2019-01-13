@@ -82,11 +82,6 @@ class MouseTrack(QMainWindow):
         self.setWindowTitle('WhiskLabeler: '+os.path.split(self.sessDir)[-1])
 
         self.createToolBar()
-        self.labels, self.trials = self.loadTrials()
-        self.listTrials = [i for i in self.trials]
-        self.minFrame = 0
-        self.isPlaying = False
-        self.quitCommit = False
 
         layout = QGridLayout()
         wid = QWidget(self)
@@ -95,6 +90,19 @@ class MouseTrack(QMainWindow):
         self.mediaPlayer = QtCapture(os.path.join(self.sessDir, 'runWisk.mp4'))
         self.totFrames = int(self.mediaPlayer.getTotalFrames())
         layout.addWidget(self.mediaPlayer, 0, 0, 3, 3)
+
+        self.labels, self.trials = self.loadTrials()
+        if self.labels == 0 and self.trials == 0:
+            retval = QMessageBox.warning(self, '', 'Invalid saved training data. Start over?', QMessageBox.Cancel | QMessageBox.Ok, QMessageBox.Ok)
+            if retval == QMessageBox.Cancel:
+                self.close()
+            else:
+                os.remove(os.path.join(self.sessDir, 'whiskerLabels.csv'))
+                self.labels, self.trials = self.loadTrials()
+        self.listTrials = [i for i in self.trials]
+        self.minFrame = 0
+        self.isPlaying = False
+        self.quitCommit = False
 
         self.progressBar = QProgressBar()
         self.progressBar.setRange(0, self.totFrames)
@@ -265,7 +273,13 @@ class MouseTrack(QMainWindow):
             with open(os.path.join(self.sessDir, 'whiskerLabels.csv'), 'r') as csvfile:
                 reader = csv.reader(csvfile)
                 for i, row in enumerate(reader):
+                    if int(row[1])>self.totFrames:
+                        print('out of bounds', int(row[1]))
+                        return 0, 0
                     labels[int(row[0])] = [int(row[1]), i]
+            if len(labels) != len(trialFrames):
+                print('size mismatch')
+                return 0, 0
         else:
             labels = {i: [-1, j] for j, i in enumerate(trialFrames)}
 
