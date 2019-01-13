@@ -46,11 +46,6 @@ class QtCapture(QGroupBox):
         pix = pix.scaledToWidth(self.video_frame.width())
         self.video_frame.setPixmap(pix)
 
-    def start(self):
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.nextFrameSlot)
-        self.timer.start(1000./self.fps)
-
     def getTotalFrames(self):
         return self.cap.get(cv2.CAP_PROP_FRAME_COUNT)
 
@@ -59,9 +54,6 @@ class QtCapture(QGroupBox):
 
     def setFrame(self, frame):
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame)
-
-    def stop(self):
-        self.timer.stop()
 
     def deleteLater(self):
         self.cap.release()
