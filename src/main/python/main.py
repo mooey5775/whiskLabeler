@@ -76,6 +76,9 @@ class MouseTrack(QMainWindow):
         self.timer = QtCore.QTimer()
 
         self.sessDir = QFileDialog.getExistingDirectory(self, 'Select Session')
+        while not os.path.exists(os.path.join(self.sessDir, 'runAnalyzed.mat')):
+            QMessageBox.warning(self, '', 'Invalid session', QMessageBox.Ok, QMessageBox.Ok)
+            self.sessDir = QFileDialog.getExistingDirectory(self, 'Select Session')
         self.setWindowTitle('WhiskLabeler: '+os.path.split(self.sessDir)[-1])
 
         self.createToolBar()
