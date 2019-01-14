@@ -67,11 +67,12 @@ class MouseTrack(QMainWindow):
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.timer = QtCore.QTimer()
 
+        self.setWindowModified(False)
         self.sessDir = QFileDialog.getExistingDirectory(self, 'Select Session')
         while not os.path.exists(os.path.join(self.sessDir, 'runAnalyzed.mat')):
             QMessageBox.warning(self, '', 'Invalid session', QMessageBox.Ok, QMessageBox.Ok)
             self.sessDir = QFileDialog.getExistingDirectory(self, 'Select Session')
-        self.setWindowTitle('WhiskLabeler: '+os.path.split(self.sessDir)[-1])
+        self.setWindowTitle(os.path.split(self.sessDir)[-1]+'[*] - WhiskLabeler')
 
         self.createToolBar()
 
@@ -175,6 +176,7 @@ class MouseTrack(QMainWindow):
         self.trialList.item(self.labels[self.currTrial][1]).setText(str(self.currTrial)+': '+str(self.labels[self.currTrial][0]))
         self.touchLabel.setText('Touch: '+str(self.labels[self.currTrial][0]))
         self.updateUnlabeled()
+        self.setWindowModified(True)
         self.reshow()
 
     def unlabelTrial(self):
@@ -183,6 +185,7 @@ class MouseTrack(QMainWindow):
         self.trialList.item(self.labels[self.currTrial][1]).setText(str(self.currTrial))
         self.touchLabel.setText('Touch: ')
         self.updateUnlabeled()
+        self.setWindowModified(True)
         self.reshow()
 
     def populateList(self):
@@ -336,10 +339,11 @@ class MouseTrack(QMainWindow):
         with open(os.path.join(self.sessDir, 'whiskerLabels.csv'), 'w') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerows([[trial, self.labels[trial][0]] for trial in self.labels])
+        self.setWindowModified(False)
         print("saved")
 
     def confirm(self):
-        if self.quitCommit:
+        if not self.isWindowModified() or self.quitCommit:
             return True
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Warning)
