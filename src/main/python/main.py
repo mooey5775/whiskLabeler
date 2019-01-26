@@ -388,8 +388,8 @@ class MouseTrack(QMainWindow):
         msg.setText('Keyboard Shortcuts:')
         msg.setInformativeText("""Right arrow/L: Forward one frame
 Left arrow/H: Back one frame
-Up arrow: Move up one trial
-Down arrow: Move down one trial
+Up arrow/K: Move up one trial
+Down arrow/J: Move down one trial
 Space: Toggle Play/Pause
 B: Back to beginning of trial
 N: Next unlabeled trial
@@ -423,9 +423,9 @@ Ctrl+S: Save""")
             self.viewLabeled()
         elif key>=QtCore.Qt.Key_0 and key<=QtCore.Qt.Key_9:
             self.seekInTrial(key, QtCore.Qt.Key_0)
-        elif key==QtCore.Qt.Key_Up:
+        elif key==QtCore.Qt.Key_Up or key==QtCore.Qt.Key_K:
             self.seekTrial(self.listTrials[(self.labels[self.currTrial][1]-1)%len(self.labels)])
-        elif key==QtCore.Qt.Key_Down:
+        elif key==QtCore.Qt.Key_Down or key==QtCore.Qt.Key_J:
             self.seekTrial(self.listTrials[(self.labels[self.currTrial][1]+1)%len(self.labels)])
 
 class AppContext(ApplicationContext):           # 1. Subclass ApplicationContext
