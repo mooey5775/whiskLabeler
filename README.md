@@ -5,6 +5,9 @@ whiskLabeler
 ```
 $ fbs run 
 ```
+
+After running, whisker contact network can be trained with the code in this repository: [whiskerContact](https://github.com/mooey5775/whiskerContact)
+
 ## Version 
 * Version 1.0
 
